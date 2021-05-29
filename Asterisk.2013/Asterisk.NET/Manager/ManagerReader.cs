@@ -299,7 +299,7 @@ namespace AsterNET.Manager
 
 						if (!string.IsNullOrEmpty(line))
 						{
-							if (wait4identiier && line.StartsWith("Asterisk Call Manager"))
+							if (wait4identiier && (line.StartsWith("Asterisk Call Manager") || line.StartsWith("VoIP API/AMI")))
 							{
 								wait4identiier = false;
 								var connectEvent = new ConnectEvent(mrConnector);
