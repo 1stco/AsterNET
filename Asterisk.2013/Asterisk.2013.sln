@@ -3,13 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31229.75
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{80ADC18F-2BFC-4B79-B264-5244E4F2FEED}"
-	ProjectSection(SolutionItems) = preProject
-		ChangeLog.txt = ChangeLog.txt
-		Package.nuspec = Package.nuspec
-		..\README.md = ..\README.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsterNET", "Asterisk.NET\AsterNET.csproj", "{BC6E7DBA-C05A-45FE-A2A3-B1637CE16274}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsterNET.WinForm", "Asterisk.NET.WinForm\AsterNET.WinForm.csproj", "{03687626-613A-4E41-8F60-7C7839D6DD5D}"
