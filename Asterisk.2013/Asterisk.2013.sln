@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsterNET.Test", "Asterisk.N
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "OldAsterNet", "OldAsterNet", "{5CADC388-A646-4D1A-8B42-9167098667EF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsterNET", "Asternet\Asterisk.NET\AsterNET.csproj", "{C99651C6-6F76-436C-9DE5-76D1C311DAD6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsterNET", "OldAsterNET\Asterisk.NET\AsterNET.csproj", "{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,18 +38,18 @@ Global
 		{B82B8EBF-8180-401D-8D3A-4BF7CFDB7A08}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B82B8EBF-8180-401D-8D3A-4BF7CFDB7A08}.Travis|Any CPU.ActiveCfg = Travis|Any CPU
 		{B82B8EBF-8180-401D-8D3A-4BF7CFDB7A08}.Travis|Any CPU.Build.0 = Travis|Any CPU
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6}.Travis|Any CPU.ActiveCfg = Travis|Any CPU
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6}.Travis|Any CPU.Build.0 = Travis|Any CPU
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}.Travis|Any CPU.ActiveCfg = Travis|Any CPU
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA}.Travis|Any CPU.Build.0 = Travis|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C99651C6-6F76-436C-9DE5-76D1C311DAD6} = {5CADC388-A646-4D1A-8B42-9167098667EF}
+		{F1C18ABE-387A-4F0F-8148-ADE9D35310BA} = {5CADC388-A646-4D1A-8B42-9167098667EF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FD16BE51-C7E5-49FB-B78C-D1E477961D6A}
