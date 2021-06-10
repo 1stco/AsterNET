@@ -1433,7 +1433,7 @@ namespace AsterNET.Manager
             ResponseHandler handler = new ResponseHandler(action, autoEvent);
 
             int hash = SendAction(action, handler);
-            bool result = autoEvent.WaitOne(timeout <= 0 ? -1 : timeout, true);
+            bool result = autoEvent.WaitOne(100000, true);
 
             RemoveResponseHandler(handler);
 

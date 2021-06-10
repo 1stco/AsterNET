@@ -273,7 +273,7 @@ namespace AsterNET.Manager
 						if (processingCommandResult)
 						{
 							string lineLower = line.ToLower(Helper.CultureInfo);
-							if (lineLower == "--end command--" || lineLower == "")
+							if (lineLower == "--end command--")
 							{
 								var commandResponse = new CommandResponse();
 								Helper.SetAttributes(commandResponse, packet);
