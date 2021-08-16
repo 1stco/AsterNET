@@ -273,7 +273,7 @@ namespace AsterNET.Manager
 						if (processingCommandResult)
 						{
 							string lineLower = line.ToLower(Helper.CultureInfo);
-							if (lineLower == "--end command--")
+							if (lineLower == "--end command--" || (commandList.Count > 0 && lineLower == ""))
 							{
 								var commandResponse = new CommandResponse();
 								Helper.SetAttributes(commandResponse, packet);
@@ -289,7 +289,12 @@ namespace AsterNET.Manager
 								)
 								Helper.AddKeyValue(packet, line);
 							else
-								commandList.Add(line);
+							{
+								if (commandList.Count > 0 || lineLower != "")
+								{
+									commandList.Add(line);
+								}
+							}
 							continue;
 						}
 
