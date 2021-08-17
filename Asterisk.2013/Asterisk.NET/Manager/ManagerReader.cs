@@ -1,12 +1,12 @@
+using AsterNET.IO;
+using AsterNET.Manager.Action;
+using AsterNET.Manager.Event;
+using AsterNET.Manager.Response;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
-using AsterNET.IO;
-using AsterNET.Manager.Action;
-using AsterNET.Manager.Event;
-using AsterNET.Manager.Response;
 
 namespace AsterNET.Manager
 {
@@ -274,11 +274,11 @@ namespace AsterNET.Manager
                         {
                             string lineLower = line.ToLower(Helper.CultureInfo);
 
-                            if (lineLower == "--end command--" || lineLower == "")
+                            if (lineLower == "--end command--" || (commandList.Count > 0 && lineLower == ""))
                             {
                                 var commandResponse = new CommandResponse();
                                 Helper.SetAttributes(commandResponse, packet);
-                                commandResponse.Result = new List<string>(commandList);
+                                commandResponse.Result = GetTrimEndList(commandList);
                                 processingCommandResult = false;
                                 packet.Clear();
                                 mrConnector.DispatchResponse(commandResponse);
@@ -295,10 +295,7 @@ namespace AsterNET.Manager
                                 {
                                     line = line.Substring(7).TrimStart(' ');
                                 }
-                                if (!string.IsNullOrEmpty(line))
-                                {
-                                    commandList.Add(line);
-                                }
+                                commandList.Add(line);
                             }
                             continue;
                         }
@@ -366,6 +363,18 @@ namespace AsterNET.Manager
 #endif
                 mrConnector.DispatchEvent(new DisconnectEvent(mrConnector));
             }
+        }
+
+        private List<string> GetTrimEndList(List<string> commandList)
+        {
+            var toReturn = new List<string>(commandList);
+
+            while (toReturn.Count > 0 && string.IsNullOrEmpty(toReturn[toReturn.Count - 1]))
+            {
+                toReturn.RemoveAt(toReturn.Count - 1);
+            }
+
+            return toReturn;
         }
 
         #endregion

@@ -12,11 +12,13 @@ namespace AsterNET.Test
 {
     class Program
     {
-        const string DEV_HOST = "192.168.2.90";
+
+        const string DEV_HOST = "localhost";
         const int ASTERISK_PORT = 5038;
-        const string ASTERISK_HOST = "192.168.2.90";
+        const string ASTERISK_HOST = "localhost";
         const string ASTERISK_LOGINNAME = "admin";
-        const string ASTERISK_LOGINPWD = "@l0v0ip";
+        const string ASTERISK_LOGINPWD = "aA123456";
+
 
         const string ORIGINATE_CONTEXT = "from-internal";
         const string ORIGINATE_CHANNEL = "IAX2/100";
@@ -157,6 +159,10 @@ Ctrl-C to exit");
                 manager.Login();            // Login only (fast)
 
                 var response = manager.SendAction(new CommandAction("core show channels"));
+                var response2 = manager.SendAction(new CommandAction("core show channels concise"));
+
+                var response3 = manager.SendAction(new CommandAction("core show hints"));
+
 
                 Console.WriteLine("Asterisk version : " + manager.Version);
             }
