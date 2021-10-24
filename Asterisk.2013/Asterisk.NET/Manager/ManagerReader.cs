@@ -274,7 +274,7 @@ namespace AsterNET.Manager
                         {
                             string lineLower = line.ToLower(Helper.CultureInfo);
 
-                            if (lineLower == "--end command--" || (commandList.Count > 0 && lineLower == ""))
+                            if (IsEndOfCommand(lineLower))
                             {
                                 var commandResponse = new CommandResponse();
                                 Helper.SetAttributes(commandResponse, packet);
@@ -362,6 +362,25 @@ namespace AsterNET.Manager
                 logger.Info("No die, any error - send disconnect.");
 #endif
                 mrConnector.DispatchEvent(new DisconnectEvent(mrConnector));
+            }
+        }
+
+        private bool IsEndOfCommand(string lineLower)
+        {
+            if (mrConnector.asteriskVersion.HasValue)
+            {
+                if (mrConnector.asteriskVersion.Value <= AsteriskVersion.ASTERISK_13)
+                {
+                    return lineLower == "--end command--";
+                }
+                else
+                {
+                    return commandList.Count > 0 && lineLower == "";
+                }
+            }
+            else
+            {
+                return lineLower == "--end command--" || (commandList.Count > 0 && lineLower == "");
             }
         }
 

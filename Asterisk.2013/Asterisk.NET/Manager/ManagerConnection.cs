@@ -39,7 +39,7 @@ namespace AsterNET.Manager
         private bool keepAlive = true;
         private bool keepAliveAfterAuthenticationFailure = false;
         private string protocolIdentifier;
-        private AsteriskVersion asteriskVersion;
+        internal AsteriskVersion? asteriskVersion;
         private Dictionary<int, IResponseHandler> responseHandlers;
         private Dictionary<int, IResponseHandler> pingHandlers;
         private Dictionary<int, IResponseHandler> responseEventHandlers;
@@ -914,7 +914,7 @@ namespace AsterNET.Manager
         #region AsteriskVersion
         public AsteriskVersion AsteriskVersion
         {
-            get { return asteriskVersion; }
+            get { return asteriskVersion ?? AsteriskVersion.Unknown; }
         }
         #endregion
 
