@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using AsterNET.IO;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace AsterNET.Manager
 {
@@ -1176,6 +1177,7 @@ namespace AsterNET.Manager
                     }
                     else
                     {
+                        mrSocket.Dispose();
                         mrSocket = null;
                     }
                 }
@@ -1211,12 +1213,14 @@ namespace AsterNET.Manager
                         mrReader = null;
                     }
                     else
+                    {
                         mrReader.Socket = null;
+                    }
                 }
 
                 if (this.mrSocket != null)
                 {
-                    mrSocket.Close();
+                    mrSocket.Dispose();
                     mrSocket = null;
                 }
 
