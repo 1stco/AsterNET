@@ -9,7 +9,7 @@ namespace AsterNET.IO
     /// <summary>
     /// Socket connection to asterisk.
     /// </summary>
-    public class SocketConnection
+    public class SocketConnection : IDisposable
     {
         private TcpClient tcpClient;
         private NetworkStream networkStream;
@@ -201,14 +201,14 @@ namespace AsterNET.IO
         /// <throws>  IOException if the socket connection cannot be closed. </throws>
         public void Close()
         {
-            try { reader.Close(); } catch { }
-            try { writer.Close(); } catch { }
-            try { networkStream.Close(); } catch { }
+            try { reader?.Close(); } catch { }
+            try { writer?.Close(); } catch { }
+            try { networkStream?.Close(); } catch { }
             try
             {
-                tcpClient.Client.Shutdown(SocketShutdown.Both);
-                tcpClient.Client.Close();
-                tcpClient.Close();
+                tcpClient?.Client.Shutdown(SocketShutdown.Both);
+                tcpClient?.Client.Close();
+                tcpClient?.Close();
             }
             catch { }
         }
@@ -219,6 +219,7 @@ namespace AsterNET.IO
         public void Dispose()
         {
             this.Close();
+
             try { reader?.Dispose(); reader = null; } catch { }
             try { writer?.Dispose(); writer = null; } catch { }
             try { networkStream?.Dispose(); networkStream = null; } catch { }
