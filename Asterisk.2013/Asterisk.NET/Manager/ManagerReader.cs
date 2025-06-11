@@ -59,7 +59,14 @@ namespace AsterNET.Manager
         /// </summary>
         internal SocketConnection Socket
         {
-            set { mrSocket = value; }
+            set
+            {
+                if (mrSocket != null)
+                {
+                    mrSocket.Dispose();
+                }
+                mrSocket = value;
+            }
         }
 
         #endregion
@@ -73,7 +80,9 @@ namespace AsterNET.Manager
             {
                 die = value;
                 if (die)
-                    mrSocket = null;
+                {
+                    Socket = null;
+                }
             }
         }
 
@@ -154,9 +163,7 @@ namespace AsterNET.Manager
 #endif
                 // Any catch - disconncatch !
                 disconnect = true;
-                if (mrReader.mrSocket != null)
-                    mrReader.mrSocket.Close();
-                mrReader.mrSocket = null;
+                mrReader.Socket = null;
             }
         }
 
@@ -193,8 +200,10 @@ namespace AsterNET.Manager
         /// <seealso cref="ManagerConnection.setProtocolIdentifier(String)" />
         internal void Run()
         {
-            if (mrSocket == null)
-                throw new SystemException("Unable to run: socket is null.");
+            //if (mrSocket == null)
+            //{
+            //    throw new SystemException("Unable to run: socket is null.");
+            //}
 
             string line;
 
@@ -249,7 +258,7 @@ namespace AsterNET.Manager
                                     catch
                                     {
                                         disconnect = true;
-                                        mrSocket = null;
+                                        Socket = null;
                                     }
                                 }
                                 lastPacketTime = DateTime.Now;
@@ -342,7 +351,10 @@ namespace AsterNET.Manager
                         packet.Clear();
                     }
                     if (mrSocket != null)
-                        mrSocket.Close();
+                    {
+                        mrSocket.Dispose();
+                        mrSocket = null;
+                    }
                     break;
                 }
 #if LOGGER

@@ -124,12 +124,12 @@ namespace AsterNET.FastAGI
             Thread.SetData(_channel, null);
             try
             {
-                socket.Close();
+                socket.Dispose();
             }
             #if LOGGER
                 catch (IOException ex)
                 {
-                    logger.Error("Error on close socket", ex);
+                    logger.Error("Error on dispose socket", ex);
                 }
             #else
 			    catch { }

@@ -11,7 +11,7 @@
     <RootNamespace>Asterisk.NET.Test</RootNamespace>
     <AssemblyName>Asterisk.NET.Test</AssemblyName>
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
