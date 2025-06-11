@@ -200,8 +200,10 @@ namespace AsterNET.Manager
         /// <seealso cref="ManagerConnection.setProtocolIdentifier(String)" />
         internal void Run()
         {
-            if (mrSocket == null)
-                throw new SystemException("Unable to run: socket is null.");
+            //if (mrSocket == null)
+            //{
+            //    throw new SystemException("Unable to run: socket is null.");
+            //}
 
             string line;
 

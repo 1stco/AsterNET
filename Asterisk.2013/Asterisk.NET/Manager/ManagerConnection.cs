@@ -1177,8 +1177,11 @@ namespace AsterNET.Manager
                     }
                     else
                     {
-                        mrSocket.Dispose();
-                        mrSocket = null;
+                        if (mrSocket != null)
+                        {
+                            mrSocket.Dispose();
+                            mrSocket = null;
+                        }
                     }
                 }
             }
