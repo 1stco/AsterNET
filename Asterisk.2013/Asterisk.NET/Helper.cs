@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
@@ -13,6 +14,8 @@ namespace AsterNET
     internal class Helper
     {
         private static CultureInfo defaultCulture;
+        private static readonly ConcurrentDictionary<Type, IDictionary> settersCache =
+            new ConcurrentDictionary<Type, IDictionary>();
 #if LOGGER
         private static readonly Logger logger = Logger.Instance();
 #endif
@@ -336,6 +339,11 @@ namespace AsterNET
         /// <param name="clazz">the class to return the setters for</param>
         /// <returns> a Map of attributes and their accessor methods (setters)</returns>
         internal static IDictionary GetSetters(Type clazz)
+        {
+            return settersCache.GetOrAdd(clazz, CreateSetters);
+        }
+
+        private static IDictionary CreateSetters(Type clazz)
         {
             IDictionary accessors = new Hashtable();
             MethodInfo[] methods = clazz.GetMethods();

@@ -88,7 +88,11 @@ namespace AsterNET.IO
         /// </summary>
         public bool IsConnected
         {
-            get { return tcpClient.Connected; }
+            get
+            {
+                var client = tcpClient;
+                return client != null && client.Connected;
+            }
         }
         #endregion
 
