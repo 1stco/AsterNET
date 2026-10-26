@@ -32,7 +32,7 @@ namespace AsterNET.Manager
 
         private SocketConnection mrSocket;
         private Thread mrReaderThread;
-        private ManagerReader mrReader;
+        private volatile ManagerReader mrReader;
 
         private int defaultResponseTimeout = 2000;
         private int defaultEventTimeout = 5000;
@@ -78,8 +78,8 @@ namespace AsterNET.Manager
 
         /// <summary>
         /// Allows you to specifiy how events are fired. If false (default) then
-        /// events will be fired in order. Otherwise events will be fired as they arrive and 
-        /// control logic in your application will need to handle synchronization.
+        /// events will be fired in order on a dedicated event worker. Otherwise events
+        /// will be fired concurrently and your application must handle synchronization.
         /// </summary>
         public bool UseASyncEvents = false;
 
@@ -904,6 +904,32 @@ namespace AsterNET.Manager
         /// </remarks>
         public int SocketReceiveBufferSize { get; set; }
 
+        /// <summary>
+        /// Number of raw received bytes waiting to be parsed on the current connection.
+        /// The currently parsed buffer is not included.
+        /// </summary>
+        public long PendingReceiveBytes
+        {
+            get
+            {
+                var reader = mrReader;
+                return reader == null ? 0 : reader.PendingReceiveBytes;
+            }
+        }
+
+        /// <summary>
+        /// Number of events waiting for delivery to subscribers. Currently executing
+        /// callbacks and tasks scheduled by UseASyncEvents are not included.
+        /// </summary>
+        public int PendingEventCount
+        {
+            get
+            {
+                var reader = mrReader;
+                return reader == null ? 0 : reader.PendingEventCount;
+            }
+        }
+
         #endregion
 
         #region Version
@@ -1227,9 +1253,12 @@ namespace AsterNET.Manager
                     mrSocket = null;
                 }
 
-                responseEventHandlers.Clear();
-                responseHandlers.Clear();
-                pingHandlers.Clear();
+                lock (lockHandlers)
+                {
+                    responseEventHandlers.Clear();
+                    responseHandlers.Clear();
+                    pingHandlers.Clear();
+                }
             }
         }
         #endregion
@@ -1264,7 +1293,8 @@ namespace AsterNET.Manager
                 disconnect(false);
 
                 int retryCount = 0;
-                while (reconnectEnable && !mrReader.Die)
+                var reader = mrReader;
+                while (reconnectEnable && reader != null && !reader.Die)
                 {
                     if (retryCount >= reconnectRetryMax)
                         reconnectEnable = false;
@@ -1304,6 +1334,9 @@ namespace AsterNET.Manager
 #endif
                             continue;
                         }
+
+                        if (!reconnectEnable || reader.Die)
+                            break;
 
                         try
                         {
@@ -1608,8 +1641,10 @@ namespace AsterNET.Manager
             int hash = handler.Hash;
             if (hash != 0)
                 lock (lockHandlers)
-                    if (responseHandlers.ContainsKey(hash))
-                        responseHandlers.Remove(hash);
+                {
+                    responseHandlers.Remove(hash);
+                    pingHandlers.Remove(hash);
+                }
         }
 
         internal void RemoveResponseEventHandler(IResponseHandler handler)
@@ -1625,11 +1660,16 @@ namespace AsterNET.Manager
             IResponseHandler handler = null;
             if (hash != 0)
                 lock (lockHandlers)
-                    if (responseHandlers.ContainsKey(hash))
+                {
+                    if (responseHandlers.TryGetValue(hash, out handler))
                     {
-                        handler = responseHandlers[hash];
                         responseHandlers.Remove(hash);
                     }
+                    else if (pingHandlers.TryGetValue(hash, out handler))
+                    {
+                        pingHandlers.Remove(hash);
+                    }
+                }
             return handler;
         }
 
@@ -1903,12 +1943,19 @@ namespace AsterNET.Manager
                 }
             }
 
-            if (response == null && buffer.ContainsKey("ping") && buffer["ping"] == "Pong")
+            if (response == null && string.IsNullOrEmpty(actionId)
+                && buffer.ContainsKey("ping") && buffer["ping"] == "Pong")
             {
                 response = Helper.BuildResponse(buffer);
-                foreach (ResponseHandler pingHandler in pingHandlers.Values)
+                IResponseHandler[] handlers;
+                lock (lockHandlers)
+                {
+                    handlers = new IResponseHandler[pingHandlers.Count];
+                    pingHandlers.Values.CopyTo(handlers, 0);
+                    pingHandlers.Clear();
+                }
+                foreach (IResponseHandler pingHandler in handlers)
                     pingHandler.HandleResponse(response);
-                pingHandlers.Clear();
             }
 
             if (!reconnected)
@@ -2090,20 +2137,51 @@ namespace AsterNET.Manager
                 reconnect(true);
             }
             else
+            {
+                if (e is DisconnectEvent || e is ShutdownEvent)
+                    disconnect(false);
                 fireEvent(e);
-        }
-
-        private void eventComplete(IAsyncResult result)
-        {
+            }
         }
 
         private void fireEvent(ManagerEvent e)
         {
             if (enableEvents && internalEvent != null)
-                if (UseASyncEvents)
-                    Task.Run(() => internalEvent.Invoke(this, e)).ContinueWith(eventComplete);
+            {
+                var reader = mrReader;
+                if (reader != null)
+                    reader.EnqueueEvent(e);
                 else
-                    internalEvent.Invoke(this, e);
+                    DispatchBufferedEvent(e);
+            }
+        }
+
+        internal void DispatchBufferedEvent(ManagerEvent e)
+        {
+            if (UseASyncEvents)
+                Task.Run(() => InvokeEventHandler(e));
+            else
+                InvokeEventHandler(e);
+        }
+
+        private void InvokeEventHandler(ManagerEvent e)
+        {
+            try
+            {
+                var handler = internalEvent;
+                if (handler != null)
+                    handler(this, e);
+            }
+            catch (Exception ex)
+            {
+                // A subscriber failure must not tear down a healthy AMI connection
+                // or stop delivery of later events.
+#if LOGGER
+                logger.Error("Exception in AMI event handler", ex);
+#else
+                System.Diagnostics.Trace.TraceError("Exception in AMI event handler: {0}", ex);
+#endif
+            }
         }
 
         /// <summary>
