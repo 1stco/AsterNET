@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net472;netstandard2.0</TargetFrameworks>
-    <Version>1.6.7</Version>
+    <Version>1.6.8</Version>
     <Copyright>Copyright © 2021</Copyright>
     <Authors>Majid Bigdeli</Authors>
     <PackageLicenseUrl>https://github.com/AsterNET/AsterNET/blob/master/LICENSE</PackageLicenseUrl>
